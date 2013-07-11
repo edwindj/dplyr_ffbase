@@ -2,10 +2,11 @@ library(assert_that)
 library(dplyr)
 library(ffbase)
 
+# ---- source-ffdf.r
 ds <- source_ffdf(mtcars)
 ds
 
-
+# ----- manip-ffdf.r
  data("baseball", package = "plyr")
  
  for (n in colnames(baseball)){

@@ -14,7 +14,7 @@ source_ffdf <- function(data) {
     stop("ffbase package required to use ffdf", call. = FALSE)
   }
 
-  data <- as.ffdf(data)
+  if (!is.ffdf(data)) data <- as.ffdf(data)
   structure(list(obj = data),
     class = c("source_ffdf", "source"))
 }

@@ -36,8 +36,7 @@ print.grouped_ffdf <- function(x, ...) {
 #' @rdname grouped_ffdf
 #' @param ... variables to group by
 group_by.data.table <- function(x, ...) {
-  vars <- dplyr:::dots(...)
-
+  vars <- dots(...)
   grouped_ffdf(x, c(x$group_by, vars))
 }
 
@@ -45,7 +44,7 @@ group_by.data.table <- function(x, ...) {
 #' @export
 #' @rdname grouped_ffdf
 group_by.source_ffdf <- function(x, ...) {
-  vars <- dplyr:::dots(...)
+  vars <- dots(...)
   grouped_ffdf(x$obj, vars)
 }
 
