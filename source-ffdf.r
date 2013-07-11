@@ -27,6 +27,9 @@ as.source.ffdf <- function(x, ...) {
 #' @S3method source_vars source_ffdf
 source_vars.source_ffdf <- function(x) names(x$obj)
 
+#' @S3method source_vars ffdf
+source_vars.ffdf <- function(x) names(x)
+
 # Standard data frame methods --------------------------------------------------
 
 #' Coerce data table to source.

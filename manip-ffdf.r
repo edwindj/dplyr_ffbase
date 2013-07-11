@@ -38,10 +38,9 @@ and_expr <- function(exprs) {
 #' @export
 #' @method filter ffdf
 filter.ffdf <- function(.data, ...) {
-  expr <- and_expr(dplyr:::dots(...))
-  call <- substitute(.data[expr, ])
-
-  eval(call, parent.frame())
+  expr <- and_expr(dots(...))
+  idx <- ffwhich(.data, as.expression(expr), envir=parent.frame())
+  .data[idx, ]
 }
 
 #' @S3method filter source_ffdf
@@ -55,8 +54,8 @@ filter.source_ffdf <- function(.data, ...) {
 #' @export
 #' @method summarise ffdf
 summarise.ffdf <- function(.data, ...) {
-  cols <- dplyr:::named_dots(...)
-  list_call <- as.call(c(quote(list), dplyr:::named_dots(...)))
+  cols <- named_dots(...)
+  list_call <- as.call(c(quote(list), named_dots(...)))
   call <- substitute(.data[, list_call])
 
   eval(call, parent.frame())

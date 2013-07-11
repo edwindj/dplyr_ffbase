@@ -1,6 +1,10 @@
-library(assert_that)
+
+
+library(assertthat)
 library(dplyr)
 library(ffbase)
+
+sapply(dir(pattern="*.r$"), source)
 
 # ---- source-ffdf.r
 ds <- source_ffdf(mtcars)
@@ -13,6 +17,7 @@ ds
    x <- baseball[[n]]
    if (is.character(x)) baseball[[n]] <- factor(x) 
  }
+ rownames(baseball) <- NULL
 
  # If you start with a ffdf, you end up with a ffdf
  baseball <- as.ffdf(baseball)
