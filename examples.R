@@ -1,5 +1,3 @@
-
-
 library(assertthat)
 library(dplyr)
 library(ffbase)
@@ -25,7 +23,7 @@ ds
  head(select(baseball, id:team))
  summarise(baseball, g = mean(g))
  head(mutate(baseball, rbi = r / ab, rbi2 = rbi ^ 2))
- head(arrange(baseball, id, desc(year)))
+ head(arrange(baseball, id, year))
 
  # If you start with a source, you end up with a source
  baseball_s <- as.source(baseball)

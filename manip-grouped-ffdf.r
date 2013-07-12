@@ -32,14 +32,7 @@ NULL
 #' @method filter grouped_ffdf
 filter.grouped_ffdf <- function(.data, ...) {
   expr <- and_expr(dots(...))
-
-  env <- new.env(parent = parent.frame(), size = 1L)
-  env$data <- .data$obj
-  env$vars <- deparse_all(.data$vars)
-
-  call <- substitute(data[data[, .I[expr], by = vars]$V1])
-  out <- eval(call, env)
-
+  stop("Not implemented")
   grouped_ffdf(
     data = out,
     vars = .data$vars
@@ -49,22 +42,11 @@ filter.grouped_ffdf <- function(.data, ...) {
 #' @rdname manip_grouped_ffdf
 #' @export
 #' @method summarise grouped_ffdf
-summarise.grouped_ffdf <- function(.data, ...) {
-  # Set keys, if needed
-  keys <- deparse_all(.data$vars)
-  if (!identical(keys, key(.data$obj))) {
-    setkeyv(.data$obj, keys)
-  }
-
+summarise.grouped_ffdf <- function(.data, ...){
+  # TODO check is .data$vars match current index
+  
   cols <- named_dots(...)
-  list_call <- as.call(c(quote(list), dplyr:::named_dots(...)))
-  call <- substitute(data[, list_call, by = vars])
-
-  env <- new.env(parent = parent.frame(), size = 1L)
-  env$data <- .data$obj
-  env$vars <- keys
-  out <- eval(call, env)
-
+  stop("Not implemented")
   grouped_ffdf(
     data = out,
     vars = .data$vars
@@ -76,22 +58,9 @@ summarise.grouped_ffdf <- function(.data, ...) {
 #' @method mutate grouped_ffdf
 mutate.grouped_ffdf <- function(.data, ..., inplace = FALSE) {
   data <- .data$obj
-  # Set keys, if needed
   keys <- deparse_all(.data$vars)
   if (!inplace) data <- clone(data)
-
-  env <- new.env(parent = parent.frame(), size = 1L)
-  env$data <- data
-  env$vars <- keys
-
-  cols <- dplyr:::named_dots(...)
-  # For each new variable, generate a call of the form df[, new := expr]
-  for(col in names(cols)) {
-    call <- substitute(data[, lhs := rhs, by = vars],
-      list(lhs = as.name(col), rhs = cols[[col]]))
-    eval(call, env)
-  }
-
+  stop("Not implemented")
   grouped_ffdf(
     data = data,
     vars = .data$vars
@@ -102,16 +71,7 @@ mutate.grouped_ffdf <- function(.data, ..., inplace = FALSE) {
 #' @export
 #' @method arrange grouped_ffdf
 arrange.grouped_ffdf <- function(.data, ...) {
-  keys <- deparse_all(.data$vars)
-
-  order_call <- as.call(c(quote(fforder), .data$vars, dots(...)))
-  call <- substitute(data[order_call])
-
-  env <- new.env(parent = parent.frame(), size = 1L)
-  env$data <- .data$obj
-
-  out <- eval(call, env)
-
+  stop("Not implemented")
   grouped_ffdf(
     data = out,
     vars = .data$vars
@@ -122,9 +82,7 @@ arrange.grouped_ffdf <- function(.data, ...) {
 #' @export
 #' @method select grouped_ffdf
 select.grouped_ffdf <- function(.data, ...) {
-  input <- var_eval(.data$obj, dplyr:::dots(...), parent.frame())
-  out <- .data$obj[input]
-
+  stop("Not implemented")
   grouped_ffdf(
     data = out,
     vars = .data$vars
@@ -134,12 +92,6 @@ select.grouped_ffdf <- function(.data, ...) {
 
 #' @S3method do grouped_ffdf
 do.grouped_ffdf <- function(.data, .f, ...) {
-  keys <- dplyr:::deparse_all(.data$vars)
-  env <- new.env(parent = parent.frame(), size = 1L)
-  env$data <- .data$obj
-  env$vars <- keys
-  env$f <- .f
-
-  call <- substitute(data[, list(out = list(f(.SD, ...))), by = vars])
+  stop("Not implemented")
   eval(call, env)$out
 }

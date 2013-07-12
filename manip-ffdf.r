@@ -55,10 +55,21 @@ filter.source_ffdf <- function(.data, ...) {
 #' @method summarise ffdf
 summarise.ffdf <- function(.data, ...) {
   cols <- named_dots(...)
-  list_call <- as.call(c(quote(list), named_dots(...)))
-  call <- substitute(.data[, list_call])
-
-  eval(call, parent.frame())
+  
+  data_env <- list2env(physical(.data), parent = parent.frame())
+  data_env$count <- function() nrow(.data)
+  
+  for (col in names(cols)) {
+    data_env[[col]] <- as.ff(eval(cols[[col]], data_env))
+  }
+  
+  do.call("ffdf", (mget(names(cols), data_env)))
+#   quote
+#   l <- list()
+#   for (col in names(cols)){
+#     a <- substitute(.data$col, list(col=col))
+#   }
+#   a
 }
 
 #' @S3method summarise source_ffdf
@@ -73,19 +84,7 @@ summarise.source_ffdf <- function(.data, ...) {
 #' @method mutate fdf
 mutate.ffdf <- function(.data, ..., inplace = FALSE) {
   if (!inplace) .data <- clone(.data)
-
-  env <- new.env(parent = parent.frame(), size = 1L)
-  env$data <- .data
-
-  cols <- dplyr:::named_dots(...)
-  # For each new variable, generate a call of the form df[, new := expr]
-  for(col in names(cols)) {
-    call <- substitute(data[, lhs := rhs],
-      list(lhs = as.name(col), rhs = cols[[col]]))
-    eval(call, env)
-  }
-
-  .data
+  eval(substitute(transform(.data, ...)))
 }
 
 #' @S3method mutate source_ffdf
@@ -99,12 +98,10 @@ mutate.source_ffdf <- function(.data, ...) {
 #' @export
 #' @method arrange ffdf
 arrange.ffdf <- function(.data, ...) {
-  call <- substitute(data[fforder(...)])
-  env <- new.env(parent = parent.frame(), size = 1L)
-  env$data <- .data
-  out <- eval(call, env)
-
-  eval(call, env)
+  vars <- dots(...)
+  vars <- sapply(vars, function(v){substitute(.data$v, list(v=v))})
+  idx <- eval(substitute(do.call("fforder", vars)))
+  .data[idx,]
 }
 
 #' @S3method arrange source_ffdf
@@ -118,7 +115,7 @@ arrange.source_ffdf <- function(.data, ...) {
 #' @export
 #' @method select ffdf
 select.ffdf <- function(.data, ...) {
-  input <- var_eval(.data, dplyr:::dots(...), parent.frame())
+  input <- var_eval(dots(...), .data, parent.frame())
   .data[input]
 }
 
